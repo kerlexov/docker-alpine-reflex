@@ -1,11 +1,11 @@
-FROM golang:1.17.0-alpine3.14 as builder
+FROM --platform=${BUILDPLATFORM:-linux/amd64} golang:1.20.3 as builder
 
-ENV GOOS=linux
-ENV GOARCH=amd64
-RUN apk add --no-cache git && \
-    go install github.com/cespare/reflex@v0.3.1
+ARG TARGETOS
+ARG TARGETARCH
 
-FROM alpine:3.14
+RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go install github.com/cespare/reflex@v0.3.1
+
+FROM --platform=${BUILDPLATFORM:-linux/amd64} alpine:3.17
 
 COPY --from=builder /go/bin/reflex /usr/bin/reflex
 RUN apk add --no-cache ca-certificates
