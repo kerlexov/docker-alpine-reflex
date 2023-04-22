@@ -34,7 +34,17 @@ jobs:
         run: echo ${{ steps.docker_build.outputs.digest }}
 
   release-latest-with-golang:
-    name: "Tagged Release"
+    name: "Release with golang"
+    strategy:
+      matrix:
+        golang_docker_image_tag: [
+          1.20.3-bullseye,
+          1.20.3-buster,
+          1.20.3-alpine3.17,
+          1.19.8-bullseye,
+          1.19.8-buster,
+          1.19.8-alpine3.17
+        ]
     if: ${{ github.repository == 'Its-Alex/docker-alpine-reflex' && contains(github.ref, 'refs/heads/master') }}
     runs-on: "ubuntu-latest"
     steps:
@@ -56,7 +66,8 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/i386,linux/mips64le,linux/ppc64le,linux/s390x
           push: true
-          tags: itsalex/alpine-reflex-with-golang
+          tags: itsalex/alpine-reflex-with-golang:${{ matrix.golang_docker_image_tag }}
           file: golang.Dockerfile
+          build-args: GOLANG_IMAGE=${{ matrix.golang_docker_image_tag }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
