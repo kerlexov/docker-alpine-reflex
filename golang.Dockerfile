@@ -1,5 +1,5 @@
 ARG GOLANG_IMAGE=1.20.3-alpine
-FROM --platform=${BUILDPLATFORM:-linux/amd64} golang:$GOLANG_IMAGE as builder
+FROM --platform=${BUILDPLATFORM:-linux/arm64} golang:$GOLANG_IMAGE as builder
 
 ARG TARGETOS
 ARG TARGETARCH
